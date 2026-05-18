@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Escala+ | Painel Operacional</title>
+    <style>
+        /* ============================================
+           VARIÁVEIS CSS
+           ============================================ */
+        :root {
+            --verde-escala: #00E676;
+            --verde-fundo: #0a2818;
+            --laranja-folga: #FF9100;
+            --laranja-fundo: #2d1a0a;
+            --azul-turma: #00B0FF;
+            --roxo-turma: #B388FF;
+            --branco: #ffffff;
+            --cinza-claro: #d0d0d0;
+            --cinza-medio: #888;
+            --cinza-escuro: #1a1a1a;
+            --preto: #0a0a0a;
+            --vermelho-alerta: #FF1744;
+        }
+
+        /* ============================================
+           RESET + base
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--preto);
+            color: var(--branco);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* ============================================
+           PAINEL — grid principal de 4 linhas
+           ============================================ */
+        .painel {
+            display: grid;
+            grid-template-rows: clamp(50px, 6vh, 70px) 1fr 1fr clamp(40px, 5vh, 55px);
+            height: 100vh;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 clamp(20px, 3vw, 50px);
+            background: var(--cinza-escuro);
+            border-bottom: 3px solid var(--verde-escala);
+        }
+
+        .header h1 {
+            font-size: clamp(22px, 2.2vw, 38px);
+            color: var(--verde-escala);
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .header .data-hora {
+            font-size: clamp(20px, 1.8vw, 32px);
+            color: var(--branco);
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        .header .data-hora .relogio {
+            color: var(--verde-escala);
+            margin-left: clamp(10px, 1.5vw, 25px);
+            font-weight: 800;
+        }
+
+        /* ============================================
+           CONTEÚDO — divisão 50/50
+           ============================================ */
+        .conteudo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            background: var(--cinza-escuro);
+            overflow: hidden;
+        }
+
+        .lado {
+            padding: clamp(8px, 1.2vh, 16px) clamp(12px, 1.5vw, 20px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .lado-embarcadas {
+            background: var(--verde-fundo);
+        }
+
+        .lado-folga {
+            background: var(--laranja-fundo);
+        }
+
+        .titulo-lado {
+            font-size: clamp(16px, 1.6vw, 24px);
+            margin-bottom: clamp(6px, 0.8vh, 12px);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .titulo-lado.embarcadas {
+            color: var(--verde-escala);
+        }
+
+        .titulo-lado.folga {
+            color: var(--laranja-folga);
+        }
+
+        /* ============================================
+           GRID DOS CARDS — 2 col × 3 linhas (até 6 cards)
+           ============================================ */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: clamp(4px, 0.6vh, 8px);
+            flex: 1;
+        }
+
+        /* ============================================
+           CARD DE TURMA
+           ============================================ */
+        .card-turma {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: clamp(6px, 0.4vh, 10px);
+            padding: clamp(0.8px, 0.0vh, 1px);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(2px, 0.4vh, 6px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* Card de turma em VIAGEM (chegando ou voltando hoje) */   
+        .card-turma.em-viagem {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); 
+            animation: viagem-pulse 3s ease-in-out infinite;
+        }      
+        
+        @keyframes viagem-pulse {
+            0%, 100% { 
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+            }  
+            50% {
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.18);
+            }
+        }        
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .nome-turma {
+            font-size: clamp(28px, 3vw, 30px);
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        /* Cores por turma */
+        .turma-A .nome-turma { color: var(--azul-turma); }
+        .turma-B .nome-turma { color: var(--verde-escala); }
+        .turma-C .nome-turma { color: var(--laranja-folga); }
+        .turma-D .nome-turma { color: var(--roxo-turma); }
+
+        .dia-ciclo {
+            font-size: clamp(14px, 1.3vw, 22px);
+            color: var(--branco);
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+        }
+
+        .barra-progresso {
+            height: clamp(4px, 0.5vh, 7px);
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .barra-progresso-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .turma-A .barra-progresso-fill { background: var(--azul-turma); }
+        .turma-B .barra-progresso-fill { background: var(--verde-escala); }
+        .turma-C .barra-progresso-fill { background: var(--laranja-folga); }
+        .turma-D .barra-progresso-fill { background: var(--roxo-turma); }
+
+        .datas-info {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1px, 0.2vh, 3px);
+            font-size: clamp(11px, 1vw, 16px);
+            color: var(--cinza-claro);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.25;
+        }
+
+        .datas-info strong {
+            color: var(--branco);
+            font-weight: 700;
+        }
+
+        .prox-evento {
+            margin-top: clamp(2px, 0.3vh, 4px);
+            color: var(--branco);
+            font-weight: 800;
+            font-size: clamp(11px, 1vw, 16px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           CALENDÁRIO — agora com 2 colunas internas
+           ============================================ */
+        .calendario {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            background: var(--cinza-escuro);
+            overflow: hidden;
+        }
+
+        .mes-bloco {
+            background: var(--preto);
+            padding: clamp(6px, 0.8vh, 12px) clamp(12px, 1.5vw, 20px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TÍTULO DO MÊS — agora centralizado */
+        .mes-titulo {
+            font-size: clamp(14px, 1.4vw, 20px);
+            font-weight: 800;
+            color: var(--verde-escala);
+            margin-bottom: clamp(6px, 1vh, 12px);
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        /* NOVO: container das 2 quinzenas lado a lado */
+        .mes-quinzenas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(10px, 1.5vw, 25px);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .mes-tabela {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            gap: clamp(0px, 0.1vh, 2px) clamp(6px, 0.8vw, 12px);
+            font-size: clamp(11px, 0.95vw, 15px);
+            font-variant-numeric: tabular-nums;
+            overflow: hidden;
+            align-content: start;
+            line-height: 1.4;
+        }
+
+        .mes-evento {
+            padding: clamp(1px, 0.15vh, 3px) clamp(4px, 0.6vw, 8px);
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .mes-evento.embarque {
+            background: rgba(0, 230, 118, 0.12);
+            color: var(--verde-escala);
+        }
+
+        .mes-evento.desembarque {
+            background: rgba(255, 145, 0, 0.12);
+            color: var(--laranja-folga);
+        }
+
+        .mes-evento.sem-movimento {
+            background: rgba(180, 180, 180, 0.08);
+            color: var(--cinza-medio);
+            font-style: italic;
+        }
+
+        .mes-evento.hoje {
+            background: var(--verde-escala);
+            color: var(--preto);
+            font-weight: 900;
+        }
+
+        .mes-evento.hoje.desembarque-hoje {
+            background: var(--laranja-folga);
+            color: var(--preto);
+        }
+
+        .mes-evento.hoje.sem-movimento-hoje {
+            background: var(--cinza-claro);
+            color: var(--preto);
+            font-style: normal;
+        }
+
+        .mes-data {
+            color: var(--cinza-claro);
+            font-weight: 600;
+        }
+
+        .mes-desc {
+            color: var(--cinza-claro);
+            font-size: clamp(10px, 0.85vw, 14px);
+        }
+
+        /* ============================================
+           RODAPÉ
+           ============================================ */
+        .rodape {
+            background: var(--cinza-escuro);
+            padding: 0 clamp(20px, 3vw, 50px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: clamp(13px, 1.2vw, 18px);
+            border-top: 3px solid var(--verde-escala);
+        }
+
+        .rodape .status-online {
+            color: var(--verde-escala);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .rodape .status-online::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--verde-escala);
+            animation: pulse 2s infinite;
+        }
+
+        .rodape.alerta {
+            background: var(--vermelho-alerta);
+            border-top-color: var(--vermelho-alerta);
+            animation: piscar-alerta 1s infinite;
+        }
+
+        .rodape.alerta .status-online {
+            color: var(--branco);
+        }
+
+        .rodape.alerta .status-online::before {
+            background: var(--branco);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes piscar-alerta {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="painel">
+
+        <header class="header">
+            <h1>ESCALA+ &nbsp;|&nbsp; PAINEL OPERACIONAL</h1>
+            <div class="data-hora">
+                <span id="data-completa">--/--/----</span>
+                <span class="relogio" id="relogio">--:--:--</span>
+            </div>
+        </header>
+
+        <main class="conteudo">
+            <section class="lado lado-embarcadas">
+                <div class="titulo-lado embarcadas" id="titulo-embarcadas">🟢 EMBARCADAS</div>
+                <div class="cards-grid" id="grid-embarcadas"></div>
+            </section>
+
+            <section class="lado lado-folga">
+                <div class="titulo-lado folga" id="titulo-folga">🟠 DE FOLGA</div>
+                <div class="cards-grid" id="grid-folga"></div>
+            </section>
+        </main>
+
+        <!-- CALENDÁRIO: agora cada mês tem título centralizado + 2 quinzenas -->
+        <div class="calendario">
+            <div class="mes-bloco">
+                <div class="mes-titulo" id="titulo-mes-atual">--</div>
+                <div class="mes-quinzenas">
+                    <div class="mes-tabela" id="tabela-mes-atual-q1"></div>
+                    <div class="mes-tabela" id="tabela-mes-atual-q2"></div>
+                </div>
+            </div>
+            <div class="mes-bloco">
+                <div class="mes-titulo" id="titulo-mes-proximo">--</div>
+                <div class="mes-quinzenas">
+                    <div class="mes-tabela" id="tabela-mes-proximo-q1"></div>
+                    <div class="mes-tabela" id="tabela-mes-proximo-q2"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="rodape" id="rodape">
+            <div class="status-online" id="status-online">PAINEL AO VIVO</div>
+            <div id="info-rodape">Atualização automática à meia-noite</div>
+        </footer>
+
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO
+        // ============================================
+        const DATAS_BASE = {
+            "1B": new Date(2026, 1, 1),
+            "2B": new Date(2026, 1, 3),
+            "1D": new Date(2026, 1, 6),
+            "2D": new Date(2026, 1, 8),
+            "1A": new Date(2026, 1, 11),
+            "2A": new Date(2026, 1, 13),
+            "1C": new Date(2026, 1, 16),
+            "2C": new Date(2026, 1, 18),
+        };
+
+        const TIMEZONE = 'America/Manaus';
+        const DIAS_SEMANA_ABREV = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
+        const MESES_NOME = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+                            'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+
+        const ICONE_EMBARQUE = '🚌';
+        const ICONE_DESEMBARQUE = '🚍';
+        const ICONE_SEM_MOV = '💤';
+
+        // ============================================
+        // FUNÇÕES — datas
+        // ============================================
+        function agoraManaus() {
+            const agora = new Date();
+            const partes = new Intl.DateTimeFormat('en-CA', {
+                timeZone: TIMEZONE,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            }).formatToParts(agora);
+            const obj = {};
+            partes.forEach(p => obj[p.type] = p.value);
+            return new Date(
+                parseInt(obj.year),
+                parseInt(obj.month) - 1,
+                parseInt(obj.day),
+                parseInt(obj.hour),
+                parseInt(obj.minute),
+                parseInt(obj.second)
+            );
+        }
+
+        function diffEmDias(d1, d2) {
+            const a = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+            const b = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+            return Math.floor((a - b) / (1000 * 60 * 60 * 24));
+        }
+
+        function calcularCiclo(turma, dia) {
+            const base = DATAS_BASE[turma];
+            const dias = diffEmDias(dia, base);
+            return ((dias % 20) + 20) % 20;
+        }
+
+        function formatarData(data) {
+            const dd = String(data.getDate()).padStart(2, '0');
+            const mm = String(data.getMonth() + 1).padStart(2, '0');
+            const aaaa = data.getFullYear();
+            const dow = DIAS_SEMANA_ABREV[data.getDay()];
+            return `${dd}/${mm}/${aaaa} (${dow})`;
+        }
+
+        function formatarDataCurta(data) {
+            const dd = String(data.getDate()).padStart(2, '0');
+            const mm = String(data.getMonth() + 1).padStart(2, '0');
+            const dow = DIAS_SEMANA_ABREV[data.getDay()];
+            return `${dd}/${mm} ${dow}`;
+        }
+
+        function somarDias(data, dias) {
+            const nova = new Date(data);
+            nova.setDate(nova.getDate() + dias);
+            return nova;
+        }
+
+        // ============================================
+        // FUNÇÃO — info completa de uma turma
+        // ============================================
+        function infoTurma(turma, hoje) {
+            const ciclo = calcularCiclo(turma, hoje);
+            const estaEmbarcada = ciclo < 12;
+            let dataEmbarque, dataDesembarque, diasRestantes, progresso;
+
+            if (estaEmbarcada) {
+                dataEmbarque = somarDias(hoje, -ciclo);
+                dataDesembarque = somarDias(hoje, 11 - ciclo);
+                diasRestantes = 11 - ciclo;
+                progresso = (ciclo / 11) * 100;
+            } else {
+                dataDesembarque = somarDias(hoje, -(ciclo - 11));
+                dataEmbarque = somarDias(hoje, 20 - ciclo);
+                diasRestantes = 20 - ciclo;
+                progresso = ((ciclo - 12) / 7) * 100;
+            }
+
+            return {
+                turma, estaEmbarcada, ciclo, diasRestantes,
+                dataEmbarque, dataDesembarque, progresso,
+                grupo: turma[1]
+            };
+        }
+
+        // ============================================
+        // FUNÇÃO — HTML de um card
+        // ============================================
+        function htmlCard(info) {
+            const diaCiclo = info.estaEmbarcada
+                ? `DIA ${info.ciclo + 1} DE 12`
+                : `DIA ${info.ciclo - 11} DE 8`;
+
+            let proxEvento;
+            if (info.estaEmbarcada) {
+                if (info.ciclo === 0) {
+                    proxEvento = `🚌 CHEGA NO TRABALHO HOJE`;
+                } else if (info.ciclo === 11) {
+                    proxEvento = `🚍 VOLTA PRA CASA HOJE`;
+                } else if (info.diasRestantes === 1) {
+                    proxEvento = `🚍 VOLTA PRA CASA AMANHÃ`;
+                } else {
+                    proxEvento = `🚍 Volta pra casa em ${info.diasRestantes} dias`;
+                }
+            } else {
+                if (info.diasRestantes === 0) {
+                    proxEvento = `🚌 EMBARCA HOJE`;
+                } else if (info.diasRestantes === 1) {
+                    proxEvento = `🚌 EMBARCA AMANHÃ`;
+                } else {
+                    proxEvento = `🚌 Embarca em ${info.diasRestantes} dias`;
+                }
+            }
+
+            const emViagem = info.estaEmbarcada && (info.ciclo === 0 || info.ciclo === 11);
+        const classeViagem = emViagem ? 'em-viagem' : '';
+
+        return `
+            <div class="card-turma turma-${info.grupo} ${classeViagem}">
+                <div class="card-header">
+                    <div class="nome-turma">${info.turma}</div>
+                    <div class="dia-ciclo">${diaCiclo}</div>
+                </div>
+                <div class="barra-progresso">
+                    <div class="barra-progresso-fill" style="width: ${info.progresso}%"></div>
+                </div>
+                <div class="datas-info">
+                    <div>${ICONE_EMBARQUE} <strong>Embarque:</strong> ${formatarData(info.dataEmbarque)}</div>
+                    <div>${ICONE_DESEMBARQUE} <strong>Desembarque:</strong> ${formatarData(info.dataDesembarque)}</div>
+                </div>
+                <div class="prox-evento">${proxEvento}</div>
+            </div>
+        `;
+    }
+
+        // ============================================
+        // FUNÇÃO — gera linha de evento (helper)
+        // ============================================
+        function linhaEvento(dia, eventosNoDia, ehHoje) {
+            if (eventosNoDia.length === 0) {
+                const classe = `mes-evento sem-movimento ${ehHoje ? 'hoje sem-movimento-hoje' : ''}`;
+                return `
+                    <div class="mes-data">${formatarDataCurta(dia)}</div>
+                    <div class="${classe}">${ICONE_SEM_MOV}</div>
+                    <div class="mes-desc">sem movimentação</div>
+                `;
+            }
+            return eventosNoDia.map(ev => {
+                const classe = `mes-evento ${ev.tipo} ${ehHoje ? 'hoje' : ''} ${ehHoje && ev.tipo === 'desembarque' ? 'desembarque-hoje' : ''}`;
+                const icone = ev.tipo === 'embarque' ? ICONE_EMBARQUE : ICONE_DESEMBARQUE;
+                return `
+                    <div class="mes-data">${formatarDataCurta(dia)}</div>
+                    <div class="${classe}">${icone} ${ev.turma}</div>
+                    <div class="mes-desc">${ev.tipo === 'embarque' ? 'embarca' : 'desembarca'}</div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // FUNÇÃO — gera as DUAS quinzenas do mês
+        // Retorna { q1: html, q2: html }
+        // ============================================
+        function htmlMesQuinzenas(ano, mes, hoje) {
+            const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+            const meio = Math.ceil(ultimoDia / 2); // 28→14, 30→15, 31→16
+            const hojeStr = hoje.toDateString();
+            const q1 = [];
+            const q2 = [];
+
+            for (let d = 1; d <= ultimoDia; d++) {
+                const dia = new Date(ano, mes, d);
+                const eventosNoDia = [];
+
+                for (const turma of Object.keys(DATAS_BASE)) {
+                    const ciclo = calcularCiclo(turma, dia);
+                    if (ciclo === 0) {
+                        eventosNoDia.push({ turma, tipo: 'embarque' });
+                    } else if (ciclo === 11) {
+                        eventosNoDia.push({ turma, tipo: 'desembarque' });
+                    }
+                }
+
+                const ehHoje = dia.toDateString() === hojeStr;
+                const linha = linhaEvento(dia, eventosNoDia, ehHoje);
+
+                if (d <= meio) {
+                    q1.push(linha);
+                } else {
+                    q2.push(linha);
+                }
+            }
+
+            return {
+                q1: q1.join(''),
+                q2: q2.join('')
+            };
+        }
+
+        // ============================================
+        // FUNÇÃO PRINCIPAL — renderiza tudo
+        // ============================================
+        function renderizar() {
+            const hoje = agoraManaus();
+            const turmas = Object.keys(DATAS_BASE).map(t => infoTurma(t, hoje));
+            const embarcadas = turmas.filter(t => t.estaEmbarcada);
+            const folga = turmas.filter(t => !t.estaEmbarcada);
+
+            document.getElementById('grid-embarcadas').innerHTML = embarcadas.map(htmlCard).join('');
+            document.getElementById('grid-folga').innerHTML = folga.map(htmlCard).join('');
+
+            document.getElementById('titulo-embarcadas').textContent = `🟢 EMBARCADAS (${embarcadas.length})`;
+            document.getElementById('titulo-folga').textContent = `🟠 DE FOLGA (${folga.length})`;
+
+            const ano = hoje.getFullYear();
+            const mes = hoje.getMonth();
+            const proxMes = mes === 11 ? 0 : mes + 1;
+            const proxAno = mes === 11 ? ano + 1 : ano;
+
+            document.getElementById('titulo-mes-atual').textContent = `📅 ${MESES_NOME[mes]} ${ano}`;
+            document.getElementById('titulo-mes-proximo').textContent = `📅 ${MESES_NOME[proxMes]} ${proxAno}`;
+
+            // Renderiza mês atual em 2 quinzenas
+            const mesAtual = htmlMesQuinzenas(ano, mes, hoje);
+            document.getElementById('tabela-mes-atual-q1').innerHTML = mesAtual.q1;
+            document.getElementById('tabela-mes-atual-q2').innerHTML = mesAtual.q2;
+
+            // Renderiza próximo mês em 2 quinzenas
+            const mesProximo = htmlMesQuinzenas(proxAno, proxMes, hoje);
+            document.getElementById('tabela-mes-proximo-q1').innerHTML = mesProximo.q1;
+            document.getElementById('tabela-mes-proximo-q2').innerHTML = mesProximo.q2;
+
+            document.getElementById('data-completa').textContent = formatarData(hoje).toUpperCase();
+        }
+
+        // ============================================
+        // RELÓGIO
+        // ============================================
+        function atualizarRelogio() {
+            const agora = agoraManaus();
+            const hh = String(agora.getHours()).padStart(2, '0');
+            const mm = String(agora.getMinutes()).padStart(2, '0');
+            const ss = String(agora.getSeconds()).padStart(2, '0');
+            document.getElementById('relogio').textContent = `${hh}:${mm}:${ss}`;
+        }
+
+        // ============================================
+        // DETECÇÃO DE TRAVAMENTO
+        // ============================================
+        let ultimaAtualizacao = Date.now();
+
+        function verificarSaude() {
+            const segundosDesde = (Date.now() - ultimaAtualizacao) / 1000;
+            const rodape = document.getElementById('rodape');
+            const status = document.getElementById('status-online');
+            const info = document.getElementById('info-rodape');
+
+            if (segundosDesde > 120) {
+                rodape.classList.add('alerta');
+                status.textContent = '⚠️ PAINEL DESATUALIZADO';
+                info.textContent = 'PRESSIONE F5 PARA ATUALIZAR';
+            } else {
+                rodape.classList.remove('alerta');
+                status.textContent = 'PAINEL AO VIVO';
+                info.textContent = 'Atualização automática à meia-noite';
+            }
+        }
+
+        // ============================================
+        // VIRADA DE MEIA-NOITE
+        // ============================================
+        function agendarMeiaNoite() {
+            const agora = agoraManaus();
+            const amanha = new Date(agora);
+            amanha.setDate(amanha.getDate() + 1);
+            amanha.setHours(0, 0, 1, 0);
+            const msAteAmanha = amanha - agora;
+            setTimeout(() => {
+                renderizar();
+                agendarMeiaNoite();
+            }, msAteAmanha);
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        renderizar();
+        atualizarRelogio();
+        agendarMeiaNoite();
+
+        setInterval(() => {
+            atualizarRelogio();
+            ultimaAtualizacao = Date.now();
+        }, 1000);
+
+        setInterval(verificarSaude, 30000);
+    </script>
+
+</body>
+</html>
