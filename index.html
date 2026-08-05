@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Escala+ | Painel Operacional</title>
@@ -41,6 +42,52 @@
         }
 
         /* ============================================
+           MARCADORES — substituem os ícones emoji
+           Dimensionados em "em" para acompanharem o
+           clamp() da fonte de cada contexto.
+           ============================================ */
+        .mk {
+            display: inline-block;
+            width: 0.62em;
+            height: 0.62em;
+            border-radius: 50%;
+            background: var(--mk-cor);
+            box-shadow: 0 0 6px -1px var(--mk-cor);
+            vertical-align: 0.04em;
+            margin-right: 0.5em;
+            flex: 0 0 auto;
+        }
+
+        .mk--embarque {
+            --mk-cor: var(--verde-escala);
+        }
+
+        .mk--desembarque {
+            --mk-cor: var(--laranja-folga);
+        }
+
+        /* Sem movimentação: vazado e sem brilho.
+           Dia parado não deve competir por atenção. */
+        .mk--parado {
+            background: transparent;
+            border: 0.1em solid var(--cinza-medio);
+            box-shadow: none;
+        }
+
+        /* Marcador de cabeçalho de seção: herda a cor do título */
+        .mk--titulo {
+            --mk-cor: currentColor;
+            width: 0.55em;
+            height: 0.55em;
+            margin-right: 0.5em;
+        }
+
+        /* Marcador sozinho na célula (dia sem movimentação) */
+        .mk--sozinho {
+            margin-right: 0;
+        }
+
+        /* ============================================
            PAINEL — grid principal de 4 linhas
            ============================================ */
         .painel {
@@ -75,11 +122,15 @@
             font-weight: 600;
         }
 
-        .header .data-hora .relogio {
-            color: var(--verde-escala);
-            margin-left: clamp(10px, 1.5vw, 25px);
-            font-weight: 800;
+        .header .data-hora .local {
+            color: var(--cinza-medio);
+            font-size: 0.6em;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            margin-left: 0;
+            margin-right: 0.5em;
         }
+
 
         /* ============================================
            CONTEÚDO — divisão 50/50
@@ -148,22 +199,25 @@
             overflow: hidden;
         }
 
-        /* Card de turma em VIAGEM (chegando ou voltando hoje) */   
+        /* Card de turma em VIAGEM (chegando ou voltando hoje) */
         .card-turma.em-viagem {
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             animation: viagem-pulse 3s ease-in-out infinite;
-        }      
-        
+        }
+
         @keyframes viagem-pulse {
-            0%, 100% { 
+
+            0%,
+            100% {
                 box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
-            }  
+            }
+
             50% {
                 box-shadow: 0 0 25px rgba(255, 255, 255, 0.18);
             }
-        }        
+        }
 
         .card-header {
             display: flex;
@@ -179,10 +233,21 @@
         }
 
         /* Cores por turma */
-        .turma-A .nome-turma { color: var(--azul-turma); }
-        .turma-B .nome-turma { color: var(--verde-escala); }
-        .turma-C .nome-turma { color: var(--laranja-folga); }
-        .turma-D .nome-turma { color: var(--roxo-turma); }
+        .turma-A .nome-turma {
+            color: var(--azul-turma);
+        }
+
+        .turma-B .nome-turma {
+            color: var(--verde-escala);
+        }
+
+        .turma-C .nome-turma {
+            color: var(--laranja-folga);
+        }
+
+        .turma-D .nome-turma {
+            color: var(--roxo-turma);
+        }
 
         .dia-ciclo {
             font-size: clamp(14px, 1.3vw, 22px);
@@ -205,10 +270,21 @@
             transition: width 0.5s ease;
         }
 
-        .turma-A .barra-progresso-fill { background: var(--azul-turma); }
-        .turma-B .barra-progresso-fill { background: var(--verde-escala); }
-        .turma-C .barra-progresso-fill { background: var(--laranja-folga); }
-        .turma-D .barra-progresso-fill { background: var(--roxo-turma); }
+        .turma-A .barra-progresso-fill {
+            background: var(--azul-turma);
+        }
+
+        .turma-B .barra-progresso-fill {
+            background: var(--verde-escala);
+        }
+
+        .turma-C .barra-progresso-fill {
+            background: var(--laranja-folga);
+        }
+
+        .turma-D .barra-progresso-fill {
+            background: var(--roxo-turma);
+        }
 
         .datas-info {
             display: flex;
@@ -253,7 +329,7 @@
             flex-direction: column;
         }
 
-        /* TÍTULO DO MÊS — agora centralizado */
+        /* TÍTULO DO MÊS — centralizado */
         .mes-titulo {
             font-size: clamp(14px, 1.4vw, 20px);
             font-weight: 800;
@@ -263,7 +339,7 @@
             text-align: center;
         }
 
-        /* NOVO: container das 2 quinzenas lado a lado */
+        /* container das 2 quinzenas lado a lado */
         .mes-quinzenas {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -322,6 +398,17 @@
             font-style: normal;
         }
 
+        /* No dia de hoje a célula inverte: fundo claro.
+           O marcador precisa escurecer para não sumir. */
+        .mes-evento.hoje .mk {
+            --mk-cor: var(--preto);
+            box-shadow: none;
+        }
+
+        .mes-evento.hoje .mk--parado {
+            border-color: var(--preto);
+        }
+
         .mes-data {
             color: var(--cinza-claro);
             font-weight: 600;
@@ -343,6 +430,13 @@
             align-items: center;
             font-size: clamp(13px, 1.2vw, 18px);
             border-top: 3px solid var(--verde-escala);
+        }
+
+        .rodape .credito {
+            font-size: 0.65em;
+            color: var(--cinza-medio);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
 
         .rodape .status-online {
@@ -377,41 +471,71 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
         }
 
         @keyframes piscar-alerta {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .card-turma.em-viagem,
+            .rodape.alerta,
+            .rodape .status-online::before {
+                animation: none;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="painel">
+
 
         <header class="header">
             <h1>ESCALA+ &nbsp;|&nbsp; PAINEL OPERACIONAL</h1>
             <div class="data-hora">
                 <span id="data-completa">--/--/----</span>
+                <span class="local">MAO</span>
                 <span class="relogio" id="relogio">--:--:--</span>
             </div>
         </header>
 
         <main class="conteudo">
             <section class="lado lado-embarcadas">
-                <div class="titulo-lado embarcadas" id="titulo-embarcadas">🟢 EMBARCADAS</div>
+                <div class="titulo-lado embarcadas" id="titulo-embarcadas">
+                    <span class="mk mk--titulo"></span>EMBARCADAS
+                </div>
                 <div class="cards-grid" id="grid-embarcadas"></div>
             </section>
 
             <section class="lado lado-folga">
-                <div class="titulo-lado folga" id="titulo-folga">🟠 DE FOLGA</div>
+                <div class="titulo-lado folga" id="titulo-folga">
+                    <span class="mk mk--titulo"></span>DE FOLGA
+                </div>
                 <div class="cards-grid" id="grid-folga"></div>
             </section>
         </main>
 
-        <!-- CALENDÁRIO: agora cada mês tem título centralizado + 2 quinzenas -->
+        <!-- CALENDÁRIO: cada mês tem título centralizado + 2 quinzenas -->
         <div class="calendario">
             <div class="mes-bloco">
                 <div class="mes-titulo" id="titulo-mes-atual">--</div>
@@ -431,6 +555,7 @@
 
         <footer class="rodape" id="rodape">
             <div class="status-online" id="status-online">PAINEL AO VIVO</div>
+            <div class="credito">v1.2 · Desenvolvido por Jaqueline Batista</div>
             <div id="info-rodape">Atualização automática à meia-noite</div>
         </footer>
 
@@ -454,11 +579,18 @@
         const TIMEZONE = 'America/Manaus';
         const DIAS_SEMANA_ABREV = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
         const MESES_NOME = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
-                            'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+            'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
 
-        const ICONE_EMBARQUE = '🚌';
-        const ICONE_DESEMBARQUE = '🚍';
-        const ICONE_SEM_MOV = '💤';
+        // ============================================
+        // MARCADORES
+        // Antes eram emoji (🚌 🚍 💤). Agora são círculos
+        // desenhados em CSS: renderizam igual em qualquer
+        // sistema e a cor é controlada por variável.
+        // ============================================
+        const MK_EMBARQUE = '<span class="mk mk--embarque"></span>';
+        const MK_DESEMBARQUE = '<span class="mk mk--desembarque"></span>';
+        const MK_PARADO = '<span class="mk mk--parado mk--sozinho"></span>';
+        const MK_TITULO = '<span class="mk mk--titulo"></span>';
 
         // ============================================
         // FUNÇÕES — datas
@@ -554,44 +686,44 @@
             let proxEvento;
             if (info.estaEmbarcada) {
                 if (info.ciclo === 0) {
-                    proxEvento = `🚌 CHEGA NO TRABALHO HOJE`;
+                    proxEvento = `${MK_EMBARQUE}CHEGA NO TRABALHO HOJE`;
                 } else if (info.ciclo === 11) {
-                    proxEvento = `🚍 VOLTA PRA CASA HOJE`;
+                    proxEvento = `${MK_DESEMBARQUE}VOLTA PRA CASA HOJE`;
                 } else if (info.diasRestantes === 1) {
-                    proxEvento = `🚍 VOLTA PRA CASA AMANHÃ`;
+                    proxEvento = `${MK_DESEMBARQUE}VOLTA PRA CASA AMANHÃ`;
                 } else {
-                    proxEvento = `🚍 Volta pra casa em ${info.diasRestantes} dias`;
+                    proxEvento = `${MK_DESEMBARQUE}Volta pra casa em ${info.diasRestantes} dias`;
                 }
             } else {
                 if (info.diasRestantes === 0) {
-                    proxEvento = `🚌 EMBARCA HOJE`;
+                    proxEvento = `${MK_EMBARQUE}EMBARCA HOJE`;
                 } else if (info.diasRestantes === 1) {
-                    proxEvento = `🚌 EMBARCA AMANHÃ`;
+                    proxEvento = `${MK_EMBARQUE}EMBARCA AMANHÃ`;
                 } else {
-                    proxEvento = `🚌 Embarca em ${info.diasRestantes} dias`;
+                    proxEvento = `${MK_EMBARQUE}Embarca em ${info.diasRestantes} dias`;
                 }
             }
 
             const emViagem = info.estaEmbarcada && (info.ciclo === 0 || info.ciclo === 11);
-        const classeViagem = emViagem ? 'em-viagem' : '';
+            const classeViagem = emViagem ? 'em-viagem' : '';
 
-        return `
-            <div class="card-turma turma-${info.grupo} ${classeViagem}">
-                <div class="card-header">
-                    <div class="nome-turma">${info.turma}</div>
-                    <div class="dia-ciclo">${diaCiclo}</div>
+            return `
+                <div class="card-turma turma-${info.grupo} ${classeViagem}">
+                    <div class="card-header">
+                        <div class="nome-turma">${info.turma}</div>
+                        <div class="dia-ciclo">${diaCiclo}</div>
+                    </div>
+                    <div class="barra-progresso">
+                        <div class="barra-progresso-fill" style="width: ${info.progresso}%"></div>
+                    </div>
+                    <div class="datas-info">
+                        <div>${MK_EMBARQUE}<strong>Embarque:</strong> ${formatarData(info.dataEmbarque)}</div>
+                        <div>${MK_DESEMBARQUE}<strong>Desembarque:</strong> ${formatarData(info.dataDesembarque)}</div>
+                    </div>
+                    <div class="prox-evento">${proxEvento}</div>
                 </div>
-                <div class="barra-progresso">
-                    <div class="barra-progresso-fill" style="width: ${info.progresso}%"></div>
-                </div>
-                <div class="datas-info">
-                    <div>${ICONE_EMBARQUE} <strong>Embarque:</strong> ${formatarData(info.dataEmbarque)}</div>
-                    <div>${ICONE_DESEMBARQUE} <strong>Desembarque:</strong> ${formatarData(info.dataDesembarque)}</div>
-                </div>
-                <div class="prox-evento">${proxEvento}</div>
-            </div>
-        `;
-    }
+            `;
+        }
 
         // ============================================
         // FUNÇÃO — gera linha de evento (helper)
@@ -601,16 +733,16 @@
                 const classe = `mes-evento sem-movimento ${ehHoje ? 'hoje sem-movimento-hoje' : ''}`;
                 return `
                     <div class="mes-data">${formatarDataCurta(dia)}</div>
-                    <div class="${classe}">${ICONE_SEM_MOV}</div>
+                    <div class="${classe}">${MK_PARADO}</div>
                     <div class="mes-desc">sem movimentação</div>
                 `;
             }
             return eventosNoDia.map(ev => {
                 const classe = `mes-evento ${ev.tipo} ${ehHoje ? 'hoje' : ''} ${ehHoje && ev.tipo === 'desembarque' ? 'desembarque-hoje' : ''}`;
-                const icone = ev.tipo === 'embarque' ? ICONE_EMBARQUE : ICONE_DESEMBARQUE;
+                const marcador = ev.tipo === 'embarque' ? MK_EMBARQUE : MK_DESEMBARQUE;
                 return `
                     <div class="mes-data">${formatarDataCurta(dia)}</div>
-                    <div class="${classe}">${icone} ${ev.turma}</div>
+                    <div class="${classe}">${marcador}${ev.turma}</div>
                     <div class="mes-desc">${ev.tipo === 'embarque' ? 'embarca' : 'desembarca'}</div>
                 `;
             }).join('');
@@ -668,16 +800,17 @@
             document.getElementById('grid-embarcadas').innerHTML = embarcadas.map(htmlCard).join('');
             document.getElementById('grid-folga').innerHTML = folga.map(htmlCard).join('');
 
-            document.getElementById('titulo-embarcadas').textContent = `🟢 EMBARCADAS (${embarcadas.length})`;
-            document.getElementById('titulo-folga').textContent = `🟠 DE FOLGA (${folga.length})`;
+            // innerHTML (não textContent) porque o marcador é um elemento
+            document.getElementById('titulo-embarcadas').innerHTML = `${MK_TITULO}EMBARCADAS (${embarcadas.length})`;
+            document.getElementById('titulo-folga').innerHTML = `${MK_TITULO}DE FOLGA (${folga.length})`;
 
             const ano = hoje.getFullYear();
             const mes = hoje.getMonth();
             const proxMes = mes === 11 ? 0 : mes + 1;
             const proxAno = mes === 11 ? ano + 1 : ano;
 
-            document.getElementById('titulo-mes-atual').textContent = `📅 ${MESES_NOME[mes]} ${ano}`;
-            document.getElementById('titulo-mes-proximo').textContent = `📅 ${MESES_NOME[proxMes]} ${proxAno}`;
+            document.getElementById('titulo-mes-atual').textContent = `${MESES_NOME[mes]} ${ano}`;
+            document.getElementById('titulo-mes-proximo').textContent = `${MESES_NOME[proxMes]} ${proxAno}`;
 
             // Renderiza mês atual em 2 quinzenas
             const mesAtual = htmlMesQuinzenas(ano, mes, hoje);
@@ -716,7 +849,7 @@
 
             if (segundosDesde > 120) {
                 rodape.classList.add('alerta');
-                status.textContent = '⚠️ PAINEL DESATUALIZADO';
+                status.textContent = 'PAINEL DESATUALIZADO';
                 info.textContent = 'PRESSIONE F5 PARA ATUALIZAR';
             } else {
                 rodape.classList.remove('alerta');
@@ -756,4 +889,5 @@
     </script>
 
 </body>
+
 </html>
